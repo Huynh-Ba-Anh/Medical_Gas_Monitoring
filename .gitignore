@@ -1,0 +1,27 @@
+
+# STM32CubeIDE build output
+Debug/
+Release/
+
+# Compiled files
+*.o
+*.d
+*.elf
+*.hex
+*.bin
+*.map
+*.list
+*.cyclo
+*.su
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# IDE workspace metadata
+.metadata/
+
+# macOS
+.DS_Store
