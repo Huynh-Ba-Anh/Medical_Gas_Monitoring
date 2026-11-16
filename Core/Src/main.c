@@ -18,10 +18,13 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
 #include <stdio.h>
+#include <string.h>
+
 
 /* USER CODE END Includes */
 
@@ -71,8 +74,6 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-#define FILTER_WINDOW_SIZE 5
 
 uint16_t Median_Filter(uint16_t new_sample, uint16_t *windown) {
     uint8_t i, j;
@@ -135,6 +136,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buffer, NUM_ADC_CHANNELS);
+  HAL_Delay(5);
+  for(int i = 0; i < FILTER_WINDOW_SIZE; i++) {
+        oxy_window[i] = adc_buffer[0];
+        air_window[i] = adc_buffer[1];
+        vac_window[i] = adc_buffer[2];
+        o2c_window[i] = adc_buffer[3];
+    }
 
   /* USER CODE END 2 */
 
@@ -151,7 +159,9 @@ int main(void)
 	  int len = snprintf(tx_buffer, sizeof(tx_buffer),"$NODE1:%u,%u,%u,%u\r\n", filtered_oxy, filtered_air, filtered_vac, filtered_o2c);
 
 	  HAL_GPIO_WritePin(RS485_DE_RE_CTRL_GPIO_Port, RS485_DE_RE_CTRL_Pin, GPIO_PIN_SET);
-	  HAL_UART_Transmit(&huart1, (uint8_t*)tx_buffer, len, 100);
+	  if (HAL_UART_Transmit(&huart1, (uint8_t*)tx_buffer, len, 100) == HAL_OK) {
+		  while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC) == RESET);
+	  }
 	  HAL_GPIO_WritePin(RS485_DE_RE_CTRL_GPIO_Port, RS485_DE_RE_CTRL_Pin, GPIO_PIN_RESET);
 
 	  HAL_Delay(1000);
@@ -244,14 +254,15 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  sConfig.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
+if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
 
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_2;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -260,6 +271,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_2;
   sConfig.Rank = ADC_REGULAR_RANK_3;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -268,6 +280,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = ADC_REGULAR_RANK_4;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
