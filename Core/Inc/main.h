@@ -57,6 +57,20 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define PRESSURE_OXY_IN_Pin GPIO_PIN_0
+#define PRESSURE_OXY_IN_GPIO_Port GPIOA
+#define PRESSURE_AIR_IN_Pin GPIO_PIN_1
+#define PRESSURE_AIR_IN_GPIO_Port GPIOA
+#define PRESSURE_VAC_IN_Pin GPIO_PIN_2
+#define PRESSURE_VAC_IN_GPIO_Port GPIOA
+#define O2_CONC_IN_Pin GPIO_PIN_3
+#define O2_CONC_IN_GPIO_Port GPIOA
+#define LCD_SPI_SCK_Pin GPIO_PIN_5
+#define LCD_SPI_SCK_GPIO_Port GPIOA
+#define LCD_SPI_MOSI_Pin GPIO_PIN_7
+#define LCD_SPI_MOSI_GPIO_Port GPIOA
+#define RS485_DE_RE_CTRL_Pin GPIO_PIN_8
+#define RS485_DE_RE_CTRL_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
